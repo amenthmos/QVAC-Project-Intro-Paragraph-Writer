@@ -22,7 +22,13 @@ function stripPreamble(text) {
     .trim();
 }
 
-const FALLBACK = (v) => `This project ${v.slice(0, 220)}.`;
+// NOTE: earlier versions of this fallback read "This project " + description,
+// which only reads grammatically when the description happens to start with
+// a verb (e.g. "helps users track..."). Most descriptions instead start with
+// a noun phrase ("a CLI tool that...", "a mobile app for..."), which produced
+// broken sentences like "This project a CLI tool that...". Using a colon
+// instead of assuming a subject-verb fit works regardless of phrasing.
+const FALLBACK = (v) => `About this project: ${v.trim().replace(/\.$/, "").slice(0, 220)}.`;
 
 export async function generate(modelId, description) {
   const run = completion({
